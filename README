@@ -1,0 +1,7 @@
+Para carregar a malha:
+- selecionar o nome do arquivo em "File name" e pressionar "Load file".
+- para adicionar outros modelos: colocar o .obj na pasta 'Models' e adicionar o nome do modelo em uma nova linha no arquivo 'meshes.txt'.
+
+Para iniciar a extração do esqueleto pressionar "Create Skeleton" (embaixo de "Group")
+- Informações sobre a extração aparecem no terminal
+
