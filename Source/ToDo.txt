@@ -1,0 +1,4 @@
+To Do:
+
+* load model using dialog
+* add least squares

@@ -79,45 +79,6 @@ void Mesh::draw(int group, unsigned int id, unsigned int sizeV, unsigned int siz
     glDisableClientState(GL_COLOR_ARRAY);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-        
-     //   for (vector<FaceStruct>::const_iterator itFace = f.begin(); itFace != f.end(); ++itFace)
-	    //{
-		   // //glPolygonMode(GL_FRONT, GL_LINE);
-     //       glBegin(GL_POLYGON);
-		   //     for (unsigned i = 0; i < (*itFace).v.size(); ++i)
-     //           {
-     //               if(hasNormals())
-     //                   glNormal3fv(n[(*itFace).n[i]]);
-     //               else
-     //                   glNormal3fv(v[(*itFace).v[i]].n);
-     //               
-			  //      glVertex3fv(v[(*itFace).v[i]].pos);
-    	//	    }
-		   // glEnd();	//	GL_POLYGON
-	    //}      
-    //}
-    //else
-    //{
-    //    glTranslatef(-g[group-1].getCenterX(), -g[group-1].getCenterY(), -g[group-1].getCenterZ());
-    //    vector<FaceStruct>::const_iterator itFaceEnd;
-    //    if(g.size() == group)
-    //        itFaceEnd = f.end();
-    //    else
-    //        itFaceEnd = f.begin() + g[group].start;
-    //    for (vector<FaceStruct>::const_iterator itFace = f.begin() + g[group-1].start; itFace != itFaceEnd; ++itFace)
-	   // {
-		  //  glBegin(GL_POLYGON);
-		  //      for (unsigned i = 0; i < (*itFace).v.size(); ++i)
-    //            {
-			 //        if(hasNormals())
-    //                    glNormal3fv(n[(*itFace).n[i]]);
-    //                else
-    //                    glNormal3fv(v[(*itFace).v[i]].n);			        
-			 //       glVertex3fv(v[(*itFace).v[i]].pos);
-    //		    }
-		  //  glEnd();	//	GL_POLYGON            
-	   // }         
-    //}
     
     glPopMatrix();    
     glDisable(GL_LIGHTING);
@@ -126,11 +87,6 @@ void Mesh::draw(int group, unsigned int id, unsigned int sizeV, unsigned int siz
 
 void Mesh::GenerateNormals(void)
 {
-	/*if (hasNormals())
-    {
-
-		return;
-    }*/
     vector<VECTOR3D> vs;
     vector<VECTOR3D> ns;
     	
@@ -264,21 +220,7 @@ double Mesh::omega(int a, int b, int* el)
     vec1.Normalize();
     vec2.Normalize();
     double cosine = vec1.DotProduct(vec2);
-    //if((cosine >= 0.999) || (cosine <= -0.999))
-    //{
-    //    // DEGENERATE TRIANGLE
-    //    *el = c;
-    //    return 0.0;
-    //}
-   /* if(cosine > 0.9999)
-        cosine++;
-    if(cosine < -0.9999)
-        cosine++;    */    
-    /*if (cosine > maxCos)
-        maxCos = cosine;
-    if (cosine < minCos)
-        minCos = cosine;*/
-    //double alpha = acos(cosine);
+
     double angle = acos(cosine);
     double cotA;
     //cotA = cosine/(sin(angle) + 0.0001);
@@ -298,24 +240,10 @@ double Mesh::omega(int a, int b, int* el)
     vec1.Normalize();
     vec2.Normalize();
     cosine = vec1.DotProduct(vec2);
-    //if((cosine >= 0.999) || (cosine <= -0.999))
-    //{
-    //    // DEGENERATE TRIANGLE
-    //    *el = d;
-    //    return 0.0;
-    //}
-   /* if(cosine > 0.99999)
-        cosine++;
-    if(cosine < -0.99999)
-        cosine++;*/
-    /*if (cosine > maxCos)
-        maxCos = cosine;
-    if (cosine < minCos)
-        minCos = cosine;*/
-    //double beta = acos(cosine);
+
     angle = acos(cosine);
     double cotB;
-    //cotB = cosine/(sin(angle) + 0.0001);
+
     if(equal(angle, M_PI/2))
     {
         cotB = 0.0;
@@ -327,104 +255,10 @@ double Mesh::omega(int a, int b, int* el)
     else
         cotB = 1 / tan(angle);  
 
-    //double cotA = 1.0 - tan(alpha);
-    //double cotB = 1.0 - tan(beta);
     *el = -1;
 
     return cotA + cotB;
 }
-
-//double Mesh::omega(int a, int b, int* el)
-//{
-//    int c = -1, d = -1;
-//    unsigned int Nfaces = v[a].faces.size();
-//    unsigned int Nverts;
-//    for(unsigned int i = 0; i < Nfaces; i++)
-//    {
-//        Nverts = f[v[a].faces[i]].v.size();
-//        for(unsigned int j = 0; j < Nverts; j++)
-//        {
-//            if(f[v[a].faces[i]].v[j] == b)
-//            {
-//                if(f[v[a].faces[i]].v[(j+1)%Nverts] == a)
-//                {
-//                    if(c == -1)
-//                    {
-//                        c = f[v[a].faces[i]].v[(j+2)%Nverts];                        
-//                    }
-//                    else
-//                    {
-//                        d = f[v[a].faces[i]].v[(j+2)%Nverts];                        
-//                    }
-//                    break;
-//                }
-//                else
-//                {
-//                    if(c == -1)
-//                    {
-//                        c = f[v[a].faces[i]].v[(j+1)%Nverts];                        
-//                    }
-//                    else
-//                    {
-//                        d = f[v[a].faces[i]].v[(j+1)%Nverts];                       
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//        if(d != -1)
-//            break;
-//    }       
-//
-//    VECTOR3D vec1 = v[a].pos - v[c].pos;
-//    VECTOR3D vec2 = v[b].pos - v[c].pos;
-//    double cosseno;
-//    if(vec1.GetLength() > 0.0f && vec2.GetLength() > 0.0f)
-//    {    
-//        cosseno = vec1.DotProduct(vec2) / (vec1.GetLength() * vec2.GetLength());
-//        if((cosseno >= 0.9) || (cosseno <= -0.9))
-//        {
-//            // DEGENERATE TRIANGLE
-//            *el = c;
-//            return 0.0;
-//        }
-//    }
-//    else
-//    {
-//        // DEGENERATE TRIANGLE
-//        *el = c;
-//        return 0.0;
-//    }
-//
-//    //double alpha = acos(cosseno);
-//    double cotA = cosseno / sin(acos(cosseno));
-//   
-//    vec1 = v[a].pos - v[d].pos;
-//    vec2 = v[b].pos - v[d].pos;
-//    if(vec1.GetLength() > 0.0f && vec2.GetLength() > 0.0f)
-//    { 
-//        cosseno = vec1.DotProduct(vec2) / (vec1.GetLength() * vec2.GetLength());
-//        if((cosseno >= 0.9) || (cosseno <= -0.9))
-//        {
-//            // DEGENERATE TRIANGLE
-//            *el = d;
-//            return 0.0;
-//        }
-//    }
-//    else
-//    {
-//        // DEGENERATE TRIANGLE
-//        *el = d;
-//        return 0.0;
-//    }
-//    //double beta = acos(cosseno);
-//    double cotB = cosseno / sin(acos(cosseno));
-//
-//    //double cotA = 1.0 - tan(alpha);
-//    //double cotB = 1.0 - tan(beta);
-//
-//    return cotA + cotB;
-//}
 
 void Mesh::CalcAreas(void)
 {

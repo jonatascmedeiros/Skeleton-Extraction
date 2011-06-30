@@ -1,0 +1,22 @@
+/*
+Phong shading
+*/
+
+struct Out
+{
+	float4 position : POSITION;
+	float4 objPos : TEXCOORD0;
+	float4 objNormal : TEXCOORD1;
+};
+
+Out main(float4 position : POSITION,
+		 float4 normal : NORMAL)
+{
+	Out output;
+	
+	output.position = mul(glstate.matrix.mvp, position);
+	output.objPos = mul(glstate.matrix.modelview[0], position);
+	output.objNormal = mul(glstate.matrix.modelview[0], normal);
+	
+	return output;
+}

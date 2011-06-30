@@ -1,0 +1,9 @@
+*Debug*
+*.sdf
+*.opensdf
+*ipch*
+*.ilk
+*.pdb
+*.exe
+Obj/
+

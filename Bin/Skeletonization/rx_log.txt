@@ -1,0 +1,2 @@
+Shader - Vertex: No error has occurred.
+Shader - Fragment: No error has occurred.

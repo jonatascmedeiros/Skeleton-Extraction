@@ -155,16 +155,6 @@ void TW_CALL ButtonCallback(void *clientData)
                 if(MeshLoader::load(&mesh, fNames))
                 {
                     mesh.CalcAreas();
-                    //skeleton.clear();
-                    /*cout << "AdjMatrix:" << endl;
-                    for(unsigned int i = 0; i < mesh.v.size(); i++)
-                    {
-                        for(unsigned int j = 0; j < mesh.adjMatrix[i].size(); j++)
-                        {
-                            cout << mesh.adjMatrix[i][j] << " ";
-                        }
-                        cout << endl;
-                    }*/
                     
                     mesh.GenerateNormals();
                     VBOLoadFullModel(); 
@@ -211,36 +201,9 @@ void TW_CALL ButtonCallback(void *clientData)
             CreateMatrices();
             double* X = Solve(mesh);
             skeleton.clear();
-            /*for(unsigned int i = 0; i < mesh.v.size()-1; i++)
-            {
-                skeleton.push_back(VECTOR3D(X[i], X[i+(mesh.v.size()-1)], X[i+2*(mesh.v.size()-1)]));
-            }*/
             taucs_free(X);
 
 			UpdateMesh(&mesh);
-
-            //mesh.n.clear();
-            //for(unsigned int i = 0; i < mesh.v.size() - 1; i++)
-            //{
-            //    mesh.v[i+1].pos.x = X[i][0];
-            //    //mesh.v[i+1].pos.x = X[i];
-            //    mesh.v[i+1].pos.y = X[i][1];
-            //    mesh.v[i+1].pos.z = X[i][2];
-            //    mesh.v[i+1].n = VECTOR3D(0.0, 0.0, 0.0);
-            //}  
-            ////delete[] X;
-            //mesh.generateNormals();
-
-
-           /* for(unsigned int i = 0; i < mesh.v.size(); i++)
-            {
-                mesh.v[i+1].pos.x = solver.X[i];
-            }
-            mesh.n.clear();
-            for(unsigned int i = 0; i < mesh.v.size(); i++)
-            {
-                mesh.v[i].n = VECTOR3D(0.0, 0.0, 0.0);
-            }*/
             
             break;        
     }
@@ -348,11 +311,6 @@ void CalcL(Mesh* meshc)
                 }
                 else if(el != -1)
                 {
-                    // Eliminate lines i, j-1 and el-1
-                   /* eliminated[i] = true;
-                    eliminated[j-1] = true;
-                    eliminated[el-1] = true;*/
-
                     if(!eliminated[i])
                     {
                         for(iter = L[i].begin(); iter != L[i].end(); iter ++)
@@ -402,8 +360,6 @@ void CalcL(Mesh* meshc)
             L[iter->first][iter->first] -= iter->second;
         }       
     }
-    /*cout << "maxCos: " << meshc->maxCos << endl;  
-    cout << "minCos: " << meshc->minCos << endl;*/ 
     cout << "count2: " << count << endl;
     for(unsigned ggg = 0; ggg < N; ggg ++)
     {
@@ -453,10 +409,7 @@ void CreateInterface(void)
     // Create Draw Bar
 	drawBar = TwNewBar("Draw");
 	TwDefine(" Draw position='1 1' size='180 190' valuesWidth=50 "); // default size = 200 320
-    /*TwAddVarRW(drawBar, "Grid", TW_TYPE_BOOLCPP, &(drawGrid), "");*/
     TwAddVarRW(drawBar, "3D model", TW_TYPE_BOOLCPP, &(drawModel), "");
-   // TwAddVarRW(drawBar, "Sketch lines", TW_TYPE_BOOLCPP, &(drawSketching), "");
-    //TwAddVarRW(drawBar, "Strokes", TW_TYPE_BOOLCPP, &(drawStrokes), "");
 	TwAddSeparator(drawBar, NULL, NULL);
     menuIDs.push_back(101);
     TwAddButton(drawBar, "InitSketch", ButtonCallback, &(menuIDs[0]), "label = 'Init Skeleton Sketch'");
@@ -469,62 +422,6 @@ void CreateInterface(void)
     menuIDs.push_back(104);
     TwType FuncType = TwDefineEnum("FuncType", NULL, 0);
     TwAddVarCB(drawBar, "Function", FuncType, SetCallback, GetCallback, &(menuIDs[3]), "val = '0 {spacing}, 1 {width}, 2 {silhouette}' ");
-	
-	
-	// Create Parameters Bar
-	//parBar = TwNewBar("Parameters");
-	//TwDefine(" Parameters iconify help='Set line drawing parameters.' position='1 132' size='200 295' valuesWidth=80 ");
-
-	//menuIDs.push_back(201);
-	//TwType sideType = TwDefineEnum("sideType", NULL, 0);
-	//TwAddVarCB(parBar, "Side", sideType, SetCallback, GetCallback, &(menuIDs[3]), " val='0 {LEFT}, 1 {RIGHT}, 2 {BOTH}' ");
-	//
-	//TwAddSeparator(parBar, NULL, NULL);	
-
-	//menuIDs.push_back(202);
-	//TwAddVarCB(parBar, "BetaS (/100)", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[4]), " min=0.1 max=100.0 step=0.1 ");
-	//menuIDs.push_back(203);
-	//TwAddVarCB(parBar, "GamaS", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[5]), " min=-100.0 max=0.9 step=0.1 ");
-	//
-	//TwAddSeparator(parBar, NULL, NULL);
-	//
-	//menuIDs.push_back(204);
-	//TwAddVarCB(parBar, "BetaL", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[6]), " min=0.0 max=10.0 step=0.001 ");
-	//menuIDs.push_back(205);
-	//TwAddVarCB(parBar, "GamaL", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[7]), " min=-1.0 max=100.0 step=0.1 ");
-	//
-	//TwAddSeparator(parBar, NULL, NULL);
-	//
-	//menuIDs.push_back(206);
-	//TwAddVarCB(parBar, "BetaW", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[8]), " min=0.1 max=100.0 step=0.1 ");
-	//menuIDs.push_back(207);
-	//TwAddVarCB(parBar, "GamaW", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[9]), " min=-500.0 max=0.9 step=10.0 ");
-	//
-	//TwAddSeparator(parBar, NULL, NULL);
-	//
-	//menuIDs.push_back(208);
-	//TwAddVarCB(parBar, "BetaSil", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[10]), " min=0.0 max=10.0 step=0.001 ");
-	//menuIDs.push_back(209);
-	//TwAddVarCB(parBar, "GamaSil", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[11]), " min=-1.0 max=1000.0 step=1.0 ");
-	//
-	//TwAddSeparator(parBar, NULL, NULL);
-	//
-	//menuIDs.push_back(210);
-	//TwAddVarCB(parBar, "Min spacing", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[12]), " min=1.0 max=10.0 step=0.1 ");
-	//menuIDs.push_back(211);
-	//TwAddVarCB(parBar, "Min width", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[13]), " min=0.001 max=1.0 step=0.001 ");
-	//menuIDs.push_back(212);
-	//TwAddVarCB(parBar, "Max sil width", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[14]), " min=0.01 max=1.0 step=0.01 ");
-
-	//// Create Advanced Bar
-	//advBar = TwNewBar("Advanced");
-	//TwDefine(" Advanced iconify help='Advanced configuration.' position='1 428' size='200 70' valuesWidth=70 ");
-	//menuIDs.push_back(301);
-	////TwAddVarCB(advBar, "NULL0", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[14]), " min=0.01 max=1.0 step=0.01 ");
-	//menuIDs.push_back(302);
-	////TwAddVarCB(advBar, "NULL1", TW_TYPE_FLOAT, SetCallback, GetCallback, &(menuIDs[15]), " min=0.5 max=5.0 step=0.5 ");
-	//menuIDs.push_back(303);
-	//TwAddVarCB(advBar, "NSplinePoints", TW_TYPE_INT32, SetCallback, GetCallback, &(menuIDs[17]), " min=1 max=500 step=1 ");
 
     // Create Model Bar
 	modBar = TwNewBar("LoadModel");
@@ -539,10 +436,6 @@ void CreateInterface(void)
     menuIDs.push_back(403);
     TwAddButton(modBar, "CreateSkeleton", ButtonCallback, &(menuIDs[6]), " label='Create Skeleton' help='Create the mesh Skeleton' ");
     menuIDs.push_back(404);
-    /*TwAddButton(modBar, "ExtractSections", ButtonCallback, &(menuIDs[7]), " label='Extract Sections' help='Extract sections from the mesh' ");
-    menuIDs.push_back(405);
-    TwAddButton(modBar, "FindSectionROI", ButtonCallback, &(menuIDs[8]), " label='Find ROI Sections' help='Find the sections affected by the ROI' ");*/
-
 }
 
 void CreateMatrices()
@@ -605,65 +498,19 @@ void CreateMatrices()
                 }
                 else if(el != -1)
                 {
-                   /* if(!eliminated[i])
-                    {
-                        eliminated[i] = true;
-                        WH[i] = 10.0;
-                        B[i] *= (WH[i] * WH[i]); 
-                        B[i+(N)] *= (WH[i] * WH[i]); 
-                        B[i+(2*N)] *= (WH[i] * WH[i]); 
-                    }
-                    if(!eliminated[j-1])
-                    {
-                        eliminated[j-1] = true;
-                        WH[j-1] = 10.0;
-                        B[j-1] *= (WH[j-1] * WH[j-1]); 
-                        B[j-1+(N)] *= (WH[j-1] * WH[j-1]); 
-                        B[j-1+(2*N)] *= (WH[j-1] * WH[j-1]); 
-                    }
-                    if(!eliminated[el-1])
-                    {
-                        eliminated[el-1] = true;
-                        WH[el-1] = 10.0;
-                        B[el-1] *= (WH[el-1] * WH[el-1]); 
-                        B[el-1+(N)] *= (WH[el-1] * WH[el-1]); 
-                        B[el-1+(2*N)] *= (WH[el-1] * WH[el-1]); 
-                    }*/
-
                     // Eliminate lines i, j-1 and el-1
                     if(!eliminated[i])
                     {
-                        /*for(iter = L[i].begin(); iter != L[i].end(); iter ++)
-                        {
-                            if(iter->first >= i)
-                                break;
-                            L[iter->first][iter->first] += iter->second;
-                        }*/
                         eliminated[i] = true;
                         count++;
                     }
                     if(!eliminated[j-1])
                     {
-                       /* for(iter = L[j-1].begin(); iter != L[j-1].end(); iter ++)
-                        {
-                            if(iter->first >= j-1)
-                                break;
-                            L[iter->first][iter->first] += iter->second;
-                        }*/
                         eliminated[j-1] = true;
                         count++;
                     }
                     if(!eliminated[el-1])
                     {
-                        /*if((el - 1) < i)
-                        {
-                            for(iter = L[el-1].begin(); iter != L[el-1].end(); iter ++)
-                            {
-                                if(iter->first >= el-1)
-                                    break;
-                                L[iter->first][iter->first] += iter->second;
-                            }
-                        }*/
                         eliminated[el-1] = true;
                         count++;
                     }
@@ -674,29 +521,6 @@ void CreateMatrices()
         L[i][i] = omegaSum;
         omegaSum = 0.0;        
     } 
-   /* eliminated[0] = true;
-    eliminated[1] = true;
-    eliminated[2] = true;
-    eliminated[3] = true;
-    eliminated[4] = true;
-    eliminated[5] = true;*/
-    /*eliminated[55] = true;*/
-    //eliminated[9993] = true;
-   /* WH[9993] = 100.0;
-    B[9993] *= (WH[9993] * WH[9993]); 
-    B[9993+(N)] *= (WH[9993] * WH[9993]); 
-    B[9993+(2*N)] *= (WH[9993] * WH[9993]); */
-    /*eliminated[56] = true;
-    WH[56] = 100.0;
-    B[56] *= (WH[56] * WH[56]); 
-    B[56+(N)] *= (WH[56] * WH[56]); 
-    B[56+(2*N)] *= (WH[56] * WH[56]);
-    eliminated[57] = true;
-    WH[57] = 100.0;
-    B[57] *= (WH[57] * WH[57]); 
-    B[57+(N)] *= (WH[57] * WH[57]); 
-    B[57+(2*N)] *= (WH[57] * WH[57]);*/
-   
 
     for(unsigned int i = 0; i < N; i++)
     {
@@ -708,21 +532,6 @@ void CreateMatrices()
         }     
     }
 
-   /* for(unsigned int i = 0; i < N; i++)
-    {
-        if(!eliminated[i])
-        {
-            for(iter = L[i].begin(); iter != L[i].end(); iter++)
-            {
-                Lt[iter->first][i] = iter->second;
-            }
-        }
-    }*/
-
-  
-
-    /*cout << "maxCos: " << mesh.maxCos << endl;  
-    cout << "minCos: " << mesh.minCos << endl; */ 
     cout << "count1: " << count << endl;
     for(unsigned ggg = 0; ggg < N; ggg ++)
     {
@@ -732,16 +541,6 @@ void CreateMatrices()
             cout << mesh.v[ggg+1].pos.x << " " << mesh.v[ggg+1].pos.y << " " << mesh.v[ggg+1].pos.z << endl;
         }
     } 
-
-    /*cout << "L" << endl;
-    for(unsigned int i = 0; i < N; i++)
-    {
-        for(iter = L[i].begin(); iter != L[i].end(); iter++)
-        {
-            cout << "[" << iter->first << "]: "<< iter->second << " ";
-        }
-        cout << endl;
-    }*/
 
     cout << "starting CalcAtA..." << endl;
     unsigned int index = 0;
@@ -1123,7 +922,6 @@ void Motion_Main(int x,int y)
 		lastx = x;
 		lasty = y; 
        
-
        // Rotation
         if(buttons[0] && !buttons[1] && !buttons[2] && !doingSketch && !editingCP)
 		{
@@ -1189,14 +987,6 @@ double MultLinePerCol(unsigned int i, unsigned int j)
 {
     double result = 0.0;
     map<int, double>::iterator iter;
-    //iter = Lt[i].begin();
-    //for(iter = Lt[i].begin(); iter != Lt[i].end(); iter++)
-    //{
-    //    if((!Equal(Lt[j][iter->first], 0.0))/* && (!eliminated[iter->first])*/)
-    //    {
-    //        result += iter->second * Lt[j][iter->first];
-    //    }
-    //}
 
     iter = L[i].begin();
     for(iter = L[i].begin(); iter != L[i].end(); iter++)
@@ -1273,150 +1063,12 @@ void Render_Main()
     glPushMatrix();
 	glLoadIdentity();  
 
-    //glTranslatef(mesh.getCenterX(), mesh.getCenterY(), mesh.minVert.z);// - ((mesh.maxVert.x - mesh.minVert.x) * (mesh.maxVert.y - mesh.minVert.y))*20.0f);
     glTranslatef(camTX,camTY,-camZoom);
-       
-    
+           
     glRotatef(camRotY,0,1,0);
     glRotatef(camRotX,1,0,0);
     glScalef(scaleFactor, scaleFactor, scaleFactor);
     glScaled(camScale, camScale, camScale);
-
-   /* if(!skeletons.empty())
-    {
-        for(unsigned int i = 0; i < skeletons[selectedSkeleton].silVertices.size(); i++)
-        {
-            glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-            glPointSize(4.0f);
-            glBegin(GL_POINTS);
-            glVertex3fv(mesh.v[skeletons[selectedSkeleton].silVertices[i]].pos);
-            glEnd();
-            glPointSize(1.0f);
-        }
-    }*/
-    
-   
-     
-
-   
-
-    /*if(!skeletons.empty())
-    {
-        if(!skeletons[0].ROIs.empty())
-        {
-
-            glLineWidth(2.0);
-            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-
-            glBegin(GL_LINE_STRIP);
-                for(unsigned int k = 0; k < skeletons[0].sections[skeletons[0].ROIs[0].first].vertices.size(); k++)
-                {
-                    glVertex3fv(skeletons[0].sections[skeletons[0].ROIs[0].first].vertices[k].position);
-                }
-                if(skeletons[0].sections[skeletons[0].ROIs[0].first].closed)
-                    glVertex3fv(skeletons[0].sections[skeletons[0].ROIs[0].first].vertices[0].position);
-            glEnd();
-
-            glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-            glBegin(GL_LINE_STRIP);
-                for(unsigned int k = 0; k < skeletons[0].sections[skeletons[0].ROIs[0].last].vertices.size(); k++)
-                {
-                    glVertex3fv(skeletons[0].sections[skeletons[0].ROIs[0].last].vertices[k].position);
-                }
-                if(skeletons[0].sections[skeletons[0].ROIs[0].last].closed)
-                    glVertex3fv(skeletons[0].sections[skeletons[0].ROIs[0].last].vertices[0].position);
-            glEnd();
-
-            glLineWidth(1.0);
-        }
-    }*/
-   
-
-   
-
-
-
-   /* for(unsigned int k = 0; k < skeletons.size(); k++)
-    {
-        for(unsigned int i = 0; i < skeletons[k].sectionsToRender.size(); i++)
-        {
-            glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-            glBegin(GL_TRIANGLE_STRIP);
-            for(unsigned int j = 0; j < skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices.size(); j++)
-            {
-                glVertex3fv(skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[j].position - skeletons[k].sectionsToRender[i].width * skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[j].binormal);   
-                glVertex3fv(skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[j].position + skeletons[k].sectionsToRender[i].width * skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[j].binormal);              
-
-            }
-                glVertex3fv(skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[0].position - skeletons[k].sectionsToRender[i].width * skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[0].binormal);   
-                glVertex3fv(skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[0].position + skeletons[k].sectionsToRender[i].width * skeletons[k].sections[skeletons[k].sectionsToRender[i].index].vertices[0].binormal);              
-            glEnd();
-        }
-    }*/
-
-    //if(skeleton.size() > 0)
-    //{
-    //    //glUseProgram(phongShader);
-    //    glPolygonMode(GL_FRONT, GL_LINE);
-    //    glColor4f(0.0, 0.0, 0.0, 1.0);
-    //    glBegin(GL_TRIANGLES);
-    //    for(unsigned int i = 0; i < mesh.f.size(); i++)
-    //    {
-    //        for(unsigned int j = 0; j < mesh.f[i].v.size(); j++)
-    //        {
-    //           /* if((mesh.f[i].v[j] - 1) == 9994)
-    //                glColor4f(1.0, 0.0, 0.0, 1.0);
-    //            else if((mesh.f[i].v[j] - 1) == 9996)
-    //                glColor4f(0.0, 1.0, 0.0, 1.0);
-    //            else if((mesh.f[i].v[j] - 1) == 1878)
-    //                glColor4f(0.0, 0.0, 1.0, 1.0);
-    //            else if((mesh.f[i].v[j] - 1) == 10002)
-    //                glColor4f(1.0, 0.0, 1.0, 1.0);
-    //            else 
-    //                glColor4f(0.0, 0.0, 0.0, 1.0);*/
-
-    //            glVertex3f(skeleton[(mesh.f[i].v[j] - 1)].x, skeleton[(mesh.f[i].v[j] - 1)].y, skeleton[(mesh.f[i].v[j] - 1)].z);
-    //        }
-    //    }
-    //    glEnd();
-    //    glPointSize(10.0);
-    //    
-    //    glBegin(GL_POINTS);
-    //        glColor4f(1.0, 0.0, 0.0, 1.0);
-    //        glVertex3f(skeleton[9993].x, skeleton[9993].y, skeleton[9993].z);
-    //       /* glColor4f(0.0, 1.0, 0.0, 1.0);
-    //        glVertex3f(skeleton[1877].x, skeleton[1877].y, skeleton[1877].z);
-    //        glColor4f(0.0, 0.0, 1.0, 1.0);
-    //        glVertex3f(skeleton[1880].x, skeleton[1880].y, skeleton[1880].z);
-    //        glColor4f(1.0, 1.0, 0.0, 1.0);
-    //        glVertex3f(skeleton[9995].x, skeleton[9995].y, skeleton[9995].z);
-    //        glColor4f(1.0, 0.0, 1.0, 1.0);
-    //        glVertex3f(skeleton[10001].x, skeleton[10001].y, skeleton[10001].z);
-    //        glColor4f(0.0, 1.0, 1.0, 1.0);
-    //        glVertex3f(skeleton[9987].x, skeleton[9987].y, skeleton[9987].z);*/
-    //       /* glColor4f(1.0, 0.0, 0.0, 1.0);
-    //        glVertex3f(skeleton[55].x, skeleton[55].y, skeleton[55].z);
-    //        glColor4f(0.0, 1.0, 0.0, 1.0);
-    //        glVertex3f(skeleton[56].x, skeleton[56].y, skeleton[56].z);
-    //        glColor4f(0.0, 0.0, 1.0, 1.0);
-    //        glVertex3f(skeleton[57].x, skeleton[57].y, skeleton[57].z);*/
-    //    glEnd();
-    //        
-
-    //    //glUseProgram(0);
-
-    //   /* glColor4f(0.0, 0.0, 1.0, 1.0); 
-    //    glBegin(GL_LINES);
-    //    for(unsigned int i = 0; i < mesh.f.size(); i++)
-    //    {
-    //        for(unsigned int j = 0; j < mesh.f[i].v.size(); j++)
-    //        {
-    //            glVertex3f(skeleton[(mesh.f[i].v[j] - 1)].x, skeleton[(mesh.f[i].v[j] - 1)].y, skeleton[(mesh.f[i].v[j] - 1)].z);
-    //            glVertex3f(mesh.v[mesh.f[i].v[j]].pos.x, mesh.v[mesh.f[i].v[j]].pos.y, mesh.v[mesh.f[i].v[j]].pos.z);
-    //        }
-    //    }
-    //    glEnd();*/       
-    //}
    
     if(drawModel && hasModel)
     {
@@ -1736,13 +1388,6 @@ void UpdateMesh(Mesh* meshc)
             MAXDist = dist;
             MAXi = i;
         }
-        //if(Equal(meshc->v[i+1].pos.x, X[i]) && Equal(meshc->v[i+1].pos.y, X[i+N]) && Equal(meshc->v[i+1].pos.z, X[i+(2*N)]))
-        //{
-        //    cout << "Equal: " << i+1 << endl;
-        //   /* cout << meshc->v[i+1].pos.x << " " << X[i] << endl;
-        //    cout << meshc->v[i+1].pos.y << " " << X[i+N] << endl;
-        //    cout << meshc->v[i+1].pos.z << " " << X[i+(2*N)] << endl;*/
-        //}
        
         meshc->v[i+1].pos.x = X[i];
         meshc->v[i+1].pos.y = X[i+N];
@@ -1765,19 +1410,7 @@ void UpdateWeights(Mesh* meshc)
     {
         if(meshc->v[i+1].currArea < smallerArea)
             smallerArea = meshc->v[i+1].currArea;
-            //cout << "currArea: " << meshc->v[i+1].currArea << "v: " << i+1 << endl;
-        //if(!eliminated[i])
-        /*{*/
-            //if(meshc->v[i+1].currArea >= 0.00001)
                 WH[i] = sqrt(meshc->v[i+1].area/meshc->v[i+1].currArea);
-            /*else
-                WH[i] = 100.0;*/
-
-            /*if(WH[i] > 1.5)
-                WH[i] = 1.5;*/
-        /*}*/
-        /*else
-            WH[i] = 1.0;*/
         if(WH[i] > biggestWH)
         {
             biggestWH = WH[i];
@@ -1856,40 +1489,3 @@ void VBOLoadFullModel(void)
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), sizeof(GLfloat) * normals.size(), &normals[0]);  
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (vertices.size() + normals.size()), sizeof(GLfloat) * colors.size(), &colors[0]);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,0 +1,45 @@
+/*
+Phong shading
+*/
+
+struct Out
+{
+	float4 color : COLOR;
+};
+
+Out main(float4 position : TEXCOORD0,
+					float4 normal : TEXCOORD1,
+
+					uniform float3 Ka,
+					uniform float3 Kd,
+					uniform float3 Ks,
+					uniform float shininess)
+{
+	float3 pos3 = position.xyz;
+	float3 norm3 = normalize(normal.xyz);
+	float3 lightPos = float3(0, 10, -10);
+
+	float3 ambient = Ka;
+	
+	float3 L = normalize(lightPos - pos3);
+	float diffuseLight = max(dot(norm3, L), 0);
+	float3 diffuse = Kd * diffuseLight;
+	
+	float specularLight;
+	if(diffuseLight != 0) {
+		float3 Eye = normalize(-pos3);
+		float3 H = normalize(L + Eye);
+		
+		specularLight = pow(max(dot(norm3, H), 0), shininess);
+	}
+	else specularLight = 0;
+	
+	float3 specular = Ks * specularLight;
+	
+	Out output;
+
+	output.color.xyz = ambient + diffuse + specular;
+	output.color.w = 1.0;
+	
+	return output;
+}
