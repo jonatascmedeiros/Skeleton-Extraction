@@ -10,12 +10,12 @@ vecn::vecn(int size)
 		v.push_back(0.0);
 }
 
-FILE* vecn::toCholmod()
+FILE* vecn::toCholmod(string name)
 {
 	if(v.size() == 0)
 		return NULL;
 
-	FILE *f = fopen("cholmod_fileaux", "w+");
+	FILE *f = fopen(name.c_str(), "w");
 	
 	fprintf(f, "%d %d\n", v.size(), 1);
 

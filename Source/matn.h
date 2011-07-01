@@ -12,7 +12,7 @@ public:
 	matn();
 	matn(int rows, int columns);
 
-	FILE* toCholmod();
+	FILE* toCholmod(string name);
 	void fromCholmod(FILE *f);
 
 	// Gets/Sets

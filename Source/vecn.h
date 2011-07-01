@@ -10,7 +10,7 @@ public:
 	vecn();
 	vecn(int size);
 
-	FILE *toCholmod();
+	FILE *toCholmod(string name);
 	void fromCholmod(FILE *f);
 
 	// Gets/Sets

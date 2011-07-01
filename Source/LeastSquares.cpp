@@ -45,9 +45,9 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 	// anchor constraints
 	for(int i = 0; i < _n; ++i)
 	{
-		_A.set(3*_n+i, i, mesh.point3(i).x);
-		_A.set(4*_n+i, i, mesh.point3(i).y);
-		_A.set(5*_n+i, i, mesh.point3(i).z);	
+		_A.set(3*_n+i, i, 1);
+		_A.set(4*_n+i, i+_n, 1);
+		_A.set(5*_n+i, i+2*_n, 1);	
 	}
 
 }

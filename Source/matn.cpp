@@ -21,12 +21,12 @@ matn::matn(int rows, int columns)
 
 
 // convert to matrix market format
-FILE* matn::toCholmod()
+FILE* matn::toCholmod(string name)
 {
 	if(m.size() == 0)
 		return NULL;
 
-	FILE *f = fopen("cholmod_fileaux", "w+");
+	FILE *f = fopen(name.c_str(), "w");
 	
 	int zeros = 0;
 	for(int i = 0; i < m.size(); ++i) {
@@ -72,8 +72,8 @@ void matn::fromCholmod(FILE* f)
 
 vecn solveLS(matn A, vecn b)
 {
-	cholmod_sparse *Ac;
-	cholmod_dense *xc, *bc;
+	cholmod_sparse *Ac, *At, *AtA;
+	cholmod_dense *xc, *bc, *Atb;
 	cholmod_factor *Lc;
 
 	// start CHOLMOD
@@ -81,30 +81,55 @@ vecn solveLS(matn A, vecn b)
 	cholmod_start (&c);
 
 	// convert matn to cholmod format
-	FILE *filecc = A.toCholmod();
+	FILE *filecc = A.toCholmod("cholmod_fileaux1.txt");
+	fclose(filecc);
+	filecc = fopen("cholmod_fileaux1.txt", "r");
 	Ac = cholmod_read_sparse(filecc, &c);
+	At = cholmod_transpose(Ac, 0, &c);
+	AtA = cholmod_ssmult(At, Ac, 0, 1, 0, &c);
 	fclose(filecc);
+	
 
-	// convert vecn to cholmod format
-	filecc = b.toCholmod();
-	bc = cholmod_read_dense(filecc, &c);
-	fclose(filecc);
+	// convert vecn to cholmod format 
+	FILE *filecc2 = b.toCholmod("cholmod_fileaux2.txt");
+	fclose(filecc2);
+	filecc2 = fopen("cholmod_fileaux2.txt", "r");
+	bc = cholmod_read_dense(filecc2, &c);
+	
+	// stupid cholmod
+	double alpha[2] = {1, 1};
+	Atb = bc;
+
+	cholmod_sdmult(At, 0, alpha, 0, bc, Atb, &c);
+	fclose(filecc2);
+
+	filecc = fopen("cholmod_fileaux1.txt", "w");
+	cholmod_write_sparse(filecc, AtA, NULL, "", &c);
+
+	filecc2 = fopen("cholmod_fileaux2.txt", "w");
+	cholmod_write_dense(filecc2, Atb, "", &c);
 
 	// solve
-	Lc = cholmod_analyze(Ac, &c);
-	cholmod_factorize(Ac, Lc, &c);
-	xc = cholmod_solve(CHOLMOD_A, Lc, bc, &c);
+	Lc = cholmod_analyze(AtA, &c);
+	cholmod_factorize(AtA, Lc, &c);
+	xc = cholmod_solve(CHOLMOD_A, Lc, Atb, &c);
 
 	// copy x
-	cholmod_write_dense(filecc, xc, "", &c);
+	FILE *filecc3 = fopen("cholmod_getX.txt", "w");
+	cholmod_write_dense(filecc3, xc, "", &c);
+	fclose(filecc3);
+	filecc3 = fopen("cholmod_getX.txt", "r");
 	vecn x;
-	x.fromCholmod(filecc);
-	fclose(filecc);
+	x.fromCholmod(filecc3);
+	fclose(filecc3);
 
 	// free matrices
 	cholmod_free_sparse(&Ac, &c);
+	cholmod_free_sparse(&At, &c);
+	cholmod_free_sparse(&AtA, &c);
 	cholmod_free_dense(&xc, &c);
 	cholmod_free_dense(&bc, &c);
+	cholmod_free_dense(&Atb, &c);
 
 	// finish CHOLMOD
 	cholmod_finish (&c);

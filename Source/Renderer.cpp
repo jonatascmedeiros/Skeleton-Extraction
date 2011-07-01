@@ -72,7 +72,7 @@ void Renderer::resizeGL(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0, 2000, -500, 0, 0, 0, 0, 1, 0);
+	gluLookAt(0, 0, -5, 0, 0, 0, 0, 1, 0);
 }
 
 void Renderer::keyPressEvent(QKeyEvent *event) 
