@@ -71,7 +71,7 @@ public:
 	const QVector<FHandle> adjacentFaces(const VHandle &vh)   const;
 	const Triplet<VHandle> faceVertices(const FHandle &fh) const;
 	const float area(const FHandle &fh) const;
-
+	
 	// Update
 	void updateFace(const FHandle &fh) { update_normal(fh); }
 	template <template <typename T> class C>

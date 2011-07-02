@@ -85,7 +85,7 @@ vecn solveLS(matn A, vecn b)
 	fclose(filecc);
 	filecc = fopen("cholmod_fileaux1.txt", "r");
 	Ac = cholmod_read_sparse(filecc, &c);
-	At = cholmod_transpose(Ac, 0, &c);
+	At = cholmod_transpose(Ac, 1, &c);
 	AtA = cholmod_ssmult(At, Ac, 0, 1, 0, &c);
 	fclose(filecc);
 	

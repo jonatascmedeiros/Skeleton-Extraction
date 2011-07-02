@@ -25,21 +25,68 @@ void LeastSquares::createMatrix(const Mesh &mesh)
     }
 
 	// laplacian constraints
+	//for (int i = 0; i < _n; ++i) 
+	//{
+	//	// init L's center weight
+	//	for (int k = 0, offs = 0; k < 2; ++k, offs += _n)
+	//		_A.set(offs+i, offs+i, 1.0);
+
+	//	// neighbors weight
+	//	QVector<Mesh::VHandle> neighbors = mesh.adjacentVertices(Mesh::VHandle(i));
+	//	for(int j = 0; j < neighbors.size(); ++j) 
+	//	{
+	//		double w = -1.0f / (double)(neighbors.size());
+
+	//		for (int k = 0, offs = 0; k < 2; ++k, offs += _n)
+	//			_A.set(offs+i, offs+neighbors[j].idx(), w);
+	//	}
+	//}
+
 	for (int i = 0; i < _n; ++i) 
 	{
-		// init L's center weight
-		for (int k = 0, offs = 0; k < 2; ++k, offs += _n)
-			_A.set(offs+i, offs+i, 1.0);
-
+		double omegaSummation = 0.0;
+		double WL = 0.01;
 		// neighbors weight
 		QVector<Mesh::VHandle> neighbors = mesh.adjacentVertices(Mesh::VHandle(i));
+		QVector<Mesh::VHandle> commonNeighbors;
 		for(int j = 0; j < neighbors.size(); ++j) 
 		{
-			double w = -1.0f / (double)(neighbors.size());
+			// Find common neighbors
+			commonNeighbors.clear();
+			QVector<Mesh::VHandle> neighborsOfNeighbor = mesh.adjacentVertices(neighbors[j]);
+			for(int k = 0; k < neighbors.size(); ++k) 
+				for(int m = 0; m < neighborsOfNeighbor.size(); ++m)
+					if(neighbors[k].idx() == neighborsOfNeighbor[m].idx())
+						commonNeighbors.append(neighbors[k]);
+			
+			// Calculate omega	
+			vec3 v1, v2;
+			v1 = mesh.point3(Mesh::VHandle(i)) - mesh.point3(commonNeighbors[0]);
+			v2 = mesh.point3(neighbors[j]) - mesh.point3(commonNeighbors[0]);
+			v1.normalize();	v2.normalize();
+			float dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+			float angle = acos(dotProduct);
+			float cotA, cotB;
+			if(tan(angle) > 0.0)
+				cotA = 1.0 / tan(angle);
 
-			for (int k = 0, offs = 0; k < 2; ++k, offs += _n)
-				_A.set(offs+i, offs+neighbors[j].idx(), w);
+			v1 = mesh.point3(Mesh::VHandle(i)) - mesh.point3(commonNeighbors[1]);
+			v2 = mesh.point3(neighbors[j]) - mesh.point3(commonNeighbors[1]);
+			v1.normalize();	v2.normalize();
+			dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+			angle = acos(dotProduct);
+			if(tan(angle) > 0.0)
+				cotB = 1.0 / tan(angle);
+			
+			double omega = cotA + cotB;	
+			omegaSummation -= omega;
+			omega *= WL;		
+
+			for (int k = 0, offs = 0; k < 3; ++k, offs += _n)
+				_A.set(offs+i, offs+neighbors[j].idx(), omega);
 		}
+		for (int k = 0, offs = 0; k < 3; ++k, offs += _n)
+			_A.set(offs+i, offs+i, omegaSummation * WL);
 	}
 
 	// anchor constraints
@@ -49,7 +96,6 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 		_A.set(4*_n+i, i+_n, 1);
 		_A.set(5*_n+i, i+2*_n, 1);	
 	}
-
 }
 
 bool LeastSquares::solve()
