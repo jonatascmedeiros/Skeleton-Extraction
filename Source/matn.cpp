@@ -95,19 +95,23 @@ vecn solveLS(matn A, vecn b)
 	fclose(filecc2);
 	filecc2 = fopen("cholmod_fileaux2.txt", "r");
 	bc = cholmod_read_dense(filecc2, &c);
-	
-	// stupid cholmod
-	double alpha[2] = {1, 1};
-	Atb = bc;
-
-	cholmod_sdmult(At, 0, alpha, 0, bc, Atb, &c);
 	fclose(filecc2);
 
-	filecc = fopen("cholmod_fileaux1.txt", "w");
-	cholmod_write_sparse(filecc, AtA, NULL, "", &c);
+	// stupid cholmod
+	Atb = cholmod_ones(24, 1, Ac->xtype, &c);
+	
+	double alpha[2] = {1, 0};
+	double beta[2] = {0, 0};
 
+	filecc = fopen("cholmod_fileaux1.txt", "w");
+	cholmod_write_dense(filecc, Atb, "", &c);
+	fclose(filecc);
+
+	cholmod_sdmult(At, 0, alpha, beta, bc, Atb, &c);
+	
 	filecc2 = fopen("cholmod_fileaux2.txt", "w");
 	cholmod_write_dense(filecc2, Atb, "", &c);
+	fclose(filecc2);
 
 	// solve
 	Lc = cholmod_analyze(AtA, &c);

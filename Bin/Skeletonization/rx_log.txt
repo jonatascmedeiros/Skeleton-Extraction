@@ -1,2 +1,2 @@
-Shader - Vertex: No error has occurred.
-Shader - Fragment: No error has occurred.
+Shader - Vertex: CG ERROR : No error has occurred.
+Shader - Fragment: CG ERROR : No error has occurred.
