@@ -9,6 +9,8 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) 
 : QMainWindow(parent, flags)
 {
+	meshSetupOk = false; /* Guilherme */
+
 	ui.setupUi(this);
 
 	// initialize opengl widget
@@ -43,8 +45,21 @@ void MainWindow::load()
 
 void MainWindow::iterateOnce()
 {
-	_ls.solve();
+	/*_ls.solve();
 	_ls.updateMesh(&_object);
 	_ls.updateWeights(&_object);
-	_ls.updateMatrices(_object);
+	_ls.updateMatrices(_object);*/
+
+	/* Guilherme */
+	if (!meshSetupOk){ 
+		_ls.setup(_object);
+		meshSetupOk = true;
+
+		_ls.solveSystem();
+		_ls.updateMesh2(&_object);
+	} else {
+		_ls.updateSytem(_object);
+		_ls.solveSystem();
+		_ls.updateMesh2(&_object);		
+	}
 }
