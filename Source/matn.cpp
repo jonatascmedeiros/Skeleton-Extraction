@@ -98,7 +98,7 @@ vecn solveLS(matn A, vecn b)
 	fclose(filecc2);
 
 	// stupid cholmod
-	Atb = cholmod_ones(24, 1, Ac->xtype, &c);
+	Atb = cholmod_ones(Ac->ncol, 1, Ac->xtype, &c);
 	
 	double alpha[2] = {1, 0};
 	double beta[2] = {0, 0};

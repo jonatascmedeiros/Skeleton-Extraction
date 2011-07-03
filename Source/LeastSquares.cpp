@@ -45,7 +45,7 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 	for (int i = 0; i < _n; ++i) 
 	{
 		double omegaSummation = 0.0;
-		double WL = 0.1;
+		double WL = 1.0;
 		// neighbors weight
 		QVector<Mesh::VHandle> neighbors = mesh.adjacentVertices(Mesh::VHandle(i));
 		QVector<Mesh::VHandle> commonNeighbors;
