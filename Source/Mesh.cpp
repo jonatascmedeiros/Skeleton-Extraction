@@ -91,11 +91,29 @@ const float Mesh::area(const FHandle &fh) const
 	return 0.5f * ((point3(vs.b) - point3(vs.a)) ^ (point3(vs.c) - point3(vs.a))).norm();
 }
 
+void Mesh::initOneRingArea(void)
+{
+	for(int i = 0; i < n_vertices(); i++)
+		originalOneRingArea.append(getOneRingArea(Mesh::VHandle(i)));		
+}
+
+const double Mesh::getOneRingArea(const VHandle &vh) const
+{
+	QVector<Mesh::FHandle> neighborFaces = adjacentFaces(vh);
+	double oneRingArea = 0.0;
+	for(int i = 0; i < neighborFaces.size(); i++)
+		oneRingArea += area(neighborFaces[i]);
+
+	return oneRingArea;
+}
+
 // updates
 bool Mesh::update() 
 {
 	update_normals();
 	stats = Statistics(this);
+
+	initOneRingArea();
 	
 	return true;
 }

@@ -7,7 +7,9 @@
 #include <QMessageBox>
 #include <QWheelEvent>
 #include <QTimer>
+#include <QPoint>
 #include "Mesh.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -37,6 +39,8 @@ private:
 	Mesh *_object;
 	GLuint _dlList;
 	RX::Shader phong;
+	QPoint lastMousePosition;	
+	Camera cam;
 
 	QTimer _renderTimer;
 

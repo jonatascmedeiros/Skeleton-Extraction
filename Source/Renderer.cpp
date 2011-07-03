@@ -42,6 +42,9 @@ void Renderer::initializeGL()
 	phong.setFParameter1f(15.0, "shininess");
 
 	_dlList = glGenLists(1);
+
+	cam.setZoomOffset(10);
+	cam.setXRotation(-30);	
 }
 
 void Renderer::paintGL()
@@ -53,6 +56,10 @@ void Renderer::paintGL()
 	glEnable(GL_DEPTH_TEST);
 			
 	if(!_object) return;
+
+	glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glMultMatrixf(cam.getViewMatrix());	
 
 	glColor3f(1.0, 0.0, 0.0f);
 	phong.enable();
@@ -72,7 +79,7 @@ void Renderer::resizeGL(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0, 0, -5, 0, 0, 0, 0, 1, 0);
+	//gluLookAt(0, 0, -5, 0, 0, 0, 0, 1, 0);
 }
 
 void Renderer::keyPressEvent(QKeyEvent *event) 
@@ -81,10 +88,19 @@ void Renderer::keyPressEvent(QKeyEvent *event)
 
 void Renderer::mouseMoveEvent(QMouseEvent *event) 
 {
+	int dX = event->x() - lastMousePosition.x();
+    int dY = event->y() - lastMousePosition.y();
+
+	cam.updateXRotation(-dY);
+	cam.updateYRotation(-dX);
+
+	lastMousePosition = event->pos();
+	updateGL();
 }
 
 void Renderer::mousePressEvent(QMouseEvent *event) 
 {
+	lastMousePosition = event->pos();
 }
 
 void Renderer::mouseReleaseEvent(QMouseEvent *event) 
@@ -93,6 +109,8 @@ void Renderer::mouseReleaseEvent(QMouseEvent *event)
 
 void Renderer::wheelEvent(QWheelEvent *event)
 {
+	cam.updateZoomOffset(-event->delta());
+	updateGL();
 }
 
 

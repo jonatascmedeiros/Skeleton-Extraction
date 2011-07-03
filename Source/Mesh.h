@@ -58,6 +58,8 @@ public:
 	// Sets
 	void set_point3(const VHandle &vh, const vec3 &p) { set_point(vh, Point(p.floats())); }
 	void set_point3(const int     idx, const vec3 &p) { set_point3(VHandle(idx), p); }
+	
+	void initOneRingArea(void);
 
 	// Gets
 	const vec3 point3(const VHandle &vh) const { return vec3(point(vh).data()); }
@@ -71,6 +73,8 @@ public:
 	const QVector<FHandle> adjacentFaces(const VHandle &vh)   const;
 	const Triplet<VHandle> faceVertices(const FHandle &fh) const;
 	const float area(const FHandle &fh) const;
+
+	const double getOneRingArea(const VHandle &vh) const;
 	
 	// Update
 	void updateFace(const FHandle &fh) { update_normal(fh); }
@@ -96,6 +100,8 @@ public:
 
 	// Properties
 	Statistics stats;
+
+	QVector<double> originalOneRingArea;
 };
 
 inline uint qHash(const Mesh::VHandle &vh) { return qHash(vh.idx()); }

@@ -13,11 +13,13 @@ public:
 
 	void updateMesh(Mesh *mesh);
 	void updateWeights(Mesh *mesh);
+	void updateMatrices(const Mesh &mesh);
 
 private:
 	int _n;
 	matn _A;
-	vecn _x, _b; 
+	vecn _x, _b, _WH; 
+	double _WL;
 };
 
 
