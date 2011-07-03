@@ -24,11 +24,13 @@ public:
 	void updateSytem(const Mesh &mesh);
 
 
+
 private:
 	int _n;
 	matn _A;
 	vecn _x, _b, _WH; 
 	double _WL;
+
 
 	/* Guilherme */
 	vecn _y, _z;
@@ -43,6 +45,7 @@ private:
 	double _SL; //rate between contraction weights between two iterations
 	vecn _A0; //initial area of the 1 neightborhood ring for each vertex
 	vecn _AT; //actual area of the 1 neightborhood ring for each vertex
+
 
 };
 

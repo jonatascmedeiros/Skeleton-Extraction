@@ -12,10 +12,7 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 	_b = vecn(_n*6);
 	_WH = vecn(_n);
 	double a = mesh.avgArea();
-	_WL = 0.001 * sqrt(a);
-	
-	//float wl = 100 
-	//taucsType *wh = new taucsType[n];
+	_WL = 0.5;// 0.001 * sqrt(a);
     
     for(int i = 0; i < _n; ++i)
     {
@@ -29,24 +26,6 @@ void LeastSquares::createMatrix(const Mesh &mesh)
     }
 
 	// laplacian constraints
-	
-	//for (int i = 0; i < _n; ++i) 
-	//{
-	//	// init L's center weight
-	//	for (int k = 0, offs = 0; k < 2; ++k, offs += _n)
-	//		_A.set(offs+i, offs+i, 1.0);
-
-	//	// neighbors weight
-	//	QVector<Mesh::VHandle> neighbors = mesh.adjacentVertices(Mesh::VHandle(i));
-	//	for(int j = 0; j < neighbors.size(); ++j) 
-	//	{
-	//		double w = -1.0f / (double)(neighbors.size());
-
-	//		for (int k = 0, offs = 0; k < 2; ++k, offs += _n)
-	//			_A.set(offs+i, offs+neighbors[j].idx(), w);
-	//	}
-	//}
-	
 	for (int i = 0; i < _n; ++i) 
 	{
 		double omegaSummation = 0.0;
@@ -68,17 +47,20 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 			v1 = mesh.point3(Mesh::VHandle(i)) - mesh.point3(commonNeighbors[0]);
 			v2 = mesh.point3(neighbors[j]) - mesh.point3(commonNeighbors[0]);
 			v1.normalize();	v2.normalize();
-			float dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+			float dotProduct = v1 * v2;
 			float angle = acos(dotProduct);
-			float cotA, cotB;			
-			cotA = 1.0 / tan(angle);
+			float cotA, cotB;
+			if(tan(angle) != 0.0)
+				cotA = 1.0 / tan(angle);
 
 			v1 = mesh.point3(Mesh::VHandle(i)) - mesh.point3(commonNeighbors[1]);
 			v2 = mesh.point3(neighbors[j]) - mesh.point3(commonNeighbors[1]);
 			v1.normalize();	v2.normalize();
-			dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+			dotProduct = v1 * v2;
 			angle = acos(dotProduct);
-			cotB = 1.0 / tan(angle);
+			if(tan(angle) != 0.0)
+				cotB = 1.0 / tan(angle);
+
 			
 			double omega = cotA + cotB;	
 			omegaSummation -= omega;
@@ -161,15 +143,22 @@ void LeastSquares::updateMatrices(const Mesh &mesh)
 			float dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			float angle = acos(dotProduct);
 			float cotA, cotB;
-			cotA = 1.0 / tan(angle);
+			if(tan(angle) != 0.0)
+				cotA = 1.0 / tan(angle);
+			else
+				cotA = 10000;
+
 
 			v1 = mesh.point3(Mesh::VHandle(i)) - mesh.point3(commonNeighbors[1]);
 			v2 = mesh.point3(neighbors[j]) - mesh.point3(commonNeighbors[1]);
 			v1.normalize();	v2.normalize();
 			dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			angle = acos(dotProduct);
-			cotB = 1.0 / tan(angle);
-						
+			if(tan(angle) != 0.0)
+				cotB = 1.0 / tan(angle);
+			else
+				cotB = 10000;
+			
 			double omega = cotA + cotB;	
 			omegaSummation -= omega;
 			omega *= _WL;		
@@ -189,6 +178,7 @@ void LeastSquares::updateMatrices(const Mesh &mesh)
 		_A.set(5*_n+i, i+2*_n,  _WH.at(i));	
 	}	
 }
+
 
 /* Guilherme */
 void LeastSquares::updateMesh2(Mesh* mesh)
@@ -419,3 +409,4 @@ void LeastSquares::updateSytem(const Mesh &mesh)
 	}
 	
 }
+

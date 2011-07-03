@@ -65,6 +65,15 @@ void MainWindow::iterateOnce()
 
 	/* Guilherme */
 	/*if (!meshSetupOk){ 
+=======
+	_ls.solve();
+	_ls.updateMesh(&_object);
+	_ls.updateWeights(&_object);
+	_ls.updateMatrices(_object);
+
+	/*
+	if (!meshSetupOk){ 
+>>>>>>> 24d25c6368c2bb52638b2c92d2217c52333be2d3
 		_ls.setup(_object);
 		meshSetupOk = true;
 
@@ -74,5 +83,7 @@ void MainWindow::iterateOnce()
 		_ls.updateSytem(_object);
 		_ls.solveSystem();
 		_ls.updateMesh2(&_object);		
+<<<<<<< HEAD
 	}*/
+
 }
