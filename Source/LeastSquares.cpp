@@ -11,7 +11,7 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 	_x = vecn(_n*3);
 	_b = vecn(_n*6);
 	_WH = vecn(_n);
-	_WL = 0.05;
+	_WL = 1.0;
 	
 	//float wl = 100 * sqrt(mesh.avgArea());
 	//taucsType *wh = new taucsType[n];

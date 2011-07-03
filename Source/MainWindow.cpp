@@ -38,16 +38,24 @@ void MainWindow::load()
 	if(!filename.isEmpty()) {
 		_object.read(filename);
 	}
+
+	_ls.iteration = 0;
 }
 
 void MainWindow::iterateOnce()
 {
-	_ls.createMatrix(_object);
-	_ls.solve();
-	_ls.updateMesh(&_object);
-
-	_ls.updateWeights(&_object);
-	_ls.updateMatrices(_object);
-	_ls.solve();
-	_ls.updateMesh(&_object);
+	if(_ls.iteration == 0)
+	{
+		_ls.createMatrix(_object);
+		_ls.solve();
+		_ls.updateMesh(&_object);		
+	}
+	else
+	{
+		_ls.updateWeights(&_object);
+		_ls.updateMatrices(_object);
+		_ls.solve();
+		_ls.updateMesh(&_object);		
+	}
+	_ls.iteration++;	
 }
