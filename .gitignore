@@ -6,4 +6,6 @@
 *.pdb
 *.exe
 Obj/
+Bin/
+Contouring_280709_0907/
 

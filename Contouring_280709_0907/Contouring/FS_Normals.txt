@@ -1,6 +1,0 @@
-varying vec3 N;  
-
-void main (void)
-{
-	gl_FragColor = vec4(N.x, N.y, N.z, 1.0);	
-}
