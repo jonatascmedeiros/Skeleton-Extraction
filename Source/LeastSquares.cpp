@@ -1,3 +1,4 @@
+#include "matcc.h"
 #include "matn.h"
 #include "vecn.h"
 #include "LeastSquares.h"
@@ -7,12 +8,12 @@ using namespace std;
 void LeastSquares::createMatrix(const Mesh &mesh)
 {
 	_n = mesh.n_vertices();  
-	_A = matn(_n*6, _n*3);
+	_A = matcc(_n*6, _n*3);
 	_x = vecn(_n*3);
 	_b = vecn(_n*6);
 	_WH = vecn(_n);
 	double a = mesh.avgArea();
-	_WL = 0.5;// 0.001 * sqrt(a);
+	_WL = 1;//0.001 * sqrt(a);
     
     for(int i = 0; i < _n; ++i)
     {

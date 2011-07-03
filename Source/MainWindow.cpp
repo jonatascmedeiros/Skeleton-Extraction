@@ -9,8 +9,6 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) 
 : QMainWindow(parent, flags)
 {
-	meshSetupOk = false; /* Guilherme */
-
 	ui.setupUi(this);
 
 	// initialize opengl widget
@@ -39,12 +37,18 @@ void MainWindow::load()
 	QString filename = QFileDialog::getOpenFileName(this->parentWidget(), tr("Open File"), QDir::currentPath());
 	if(!filename.isEmpty()) {
 		_object.read(filename);
-		_ls.createMatrix(_object);
+		_first = true;
+		
 	}
 }
 
 void MainWindow::iterateOnce()
 {
+	if(_first) {
+		_ls.createMatrix(_object);
+		_first = false;
+	}
+
 	_ls.solve();
 	_ls.updateMesh(&_object);
 	_ls.updateWeights(&_object);

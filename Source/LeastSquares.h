@@ -1,6 +1,7 @@
 #ifndef __LEASTSQUARES_H
 #define __LEASTSQUARES_H
 
+#include "matcc.h"
 #include "matn.h"
 #include "vecn.h"
 #include "Mesh.h"
@@ -17,7 +18,7 @@ public:
 
 private:
 	int _n;
-	matn _A;
+	matcc _A;
 	vecn _x, _b, _WH; 
 	double _WL;
 };
