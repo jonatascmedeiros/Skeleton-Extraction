@@ -45,7 +45,7 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 	for (int i = 0; i < _n; ++i) 
 	{
 		double omegaSummation = 0.0;
-		double WL = 0.01;
+		double WL = 0.1;
 		// neighbors weight
 		QVector<Mesh::VHandle> neighbors = mesh.adjacentVertices(Mesh::VHandle(i));
 		QVector<Mesh::VHandle> commonNeighbors;
@@ -109,7 +109,7 @@ void LeastSquares::updateMesh(Mesh* mesh)
 {
 	for(int i = 0; i < _n; ++i)
 		mesh->set_point3(i, vec3(_x.at(i), _x.at(i+_n), _x.at(i+2*_n)));
-	mesh->update();
+	mesh->update();	
 }
 
 void LeastSquares::updateWeights(Mesh* meshc)

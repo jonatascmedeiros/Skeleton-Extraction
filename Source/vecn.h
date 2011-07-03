@@ -11,7 +11,8 @@ public:
 	vecn(int size);
 
 	FILE *toCholmod(string name);
-	void fromCholmod(FILE *f);
+	//void fromCholmod(FILE *f);
+	void fromCholmod(char* f);
 
 	// Gets/Sets
 	const double at(int i) const { return v[i]; }

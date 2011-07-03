@@ -1,4 +1,5 @@
 #include "vecn.h"
+#include <fstream>
 
 vecn::vecn()
 {
@@ -26,15 +27,23 @@ FILE* vecn::toCholmod(string name)
 	return f;
 }
 
-void vecn::fromCholmod(FILE* f)
+void vecn::fromCholmod(char* f)
 {
 	int rows, cols;
-	fscanf(f, "%d %d", &rows, &cols);
-
+	char header[200];
+	//fgets(header, 200, f);
+	fstream file;
+	file.open(f);
+	file.getline(header, 200);
+	file >> rows >> cols;
+	
+	//fscanf(f, "%d %d", &rows, &cols);
 	v.clear();
 	double val;
 	for(int i = 0; i < rows; ++i) {
-		fscanf(f, "%f", &val);
+		//fscanf(f, "%f", &val);
+		file >> val;
 		v.push_back(val);
 	}
+	file.close();
 }

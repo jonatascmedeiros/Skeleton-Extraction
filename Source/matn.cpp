@@ -122,10 +122,13 @@ vecn solveLS(matn A, vecn b)
 	FILE *filecc3 = fopen("cholmod_getX.txt", "w");
 	cholmod_write_dense(filecc3, xc, "", &c);
 	fclose(filecc3);
-	filecc3 = fopen("cholmod_getX.txt", "r");
+	//std::fstream filecc4;
+	//filecc4.open("cholmod_getX2.txt");
+	//filecc3 = fopen("cholmod_getX2.txt", "r");
 	vecn x;
-	x.fromCholmod(filecc3);
-	fclose(filecc3);
+	x.fromCholmod("cholmod_getX.txt");
+	//filecc4.close();
+	//fclose(filecc3);
 
 	// free matrices
 	cholmod_free_sparse(&Ac, &c);
