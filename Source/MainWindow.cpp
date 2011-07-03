@@ -37,17 +37,14 @@ void MainWindow::load()
 	QString filename = QFileDialog::getOpenFileName(this->parentWidget(), tr("Open File"), QDir::currentPath());
 	if(!filename.isEmpty()) {
 		_object.read(filename);
+		_ls.createMatrix(_object);
 	}
 }
 
 void MainWindow::iterateOnce()
 {
-	_ls.createMatrix(_object);
 	_ls.solve();
 	_ls.updateMesh(&_object);
-
 	_ls.updateWeights(&_object);
 	_ls.updateMatrices(_object);
-	_ls.solve();
-	_ls.updateMesh(&_object);
 }

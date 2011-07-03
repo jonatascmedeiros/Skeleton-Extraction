@@ -28,12 +28,12 @@ Mesh::Statistics::Statistics(const Mesh *mesh)
 	}
 
 	// face area
-	float faceArea = 0;
+	avgFaceArea = 0;
 	Mesh::CFIter f_it(mesh->faces_begin());
 	for (; f_it != mesh->faces_end(); ++f_it) {
-		faceArea += mesh->area(f_it.handle());
+		avgFaceArea += mesh->area(f_it.handle());
 	}
-	faceArea /= mesh->n_faces();
+	avgFaceArea /= (float)(mesh->n_faces());
 
 	ext = (max - min).norm();
 }
