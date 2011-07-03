@@ -119,16 +119,31 @@ bool Mesh::update()
 }
 
 // rendering
-bool Mesh::render() const 
+bool Mesh::render(int type) const 
 {
-	glBegin(GL_TRIANGLES);
-	for (CFIter cf_it(faces_begin()); cf_it != faces_end(); ++cf_it) {
-		CFVIter cfv_it(cfv_iter(cf_it));
-		glNormal3fv(normal(cfv_it).data()); glVertex3fv(point(cfv_it).data()); ++cfv_it;
-		glNormal3fv(normal(cfv_it).data()); glVertex3fv(point(cfv_it).data()); ++cfv_it;
-		glNormal3fv(normal(cfv_it).data()); glVertex3fv(point(cfv_it).data());
+
+	if(type)
+	{
+		glBegin(GL_TRIANGLES);
+		for (CFIter cf_it(faces_begin()); cf_it != faces_end(); ++cf_it) {
+			CFVIter cfv_it(cfv_iter(cf_it));
+			glNormal3fv(normal(cfv_it).data()); glVertex3fv(point(cfv_it).data()); ++cfv_it;
+			glNormal3fv(normal(cfv_it).data()); glVertex3fv(point(cfv_it).data()); ++cfv_it;
+			glNormal3fv(normal(cfv_it).data()); glVertex3fv(point(cfv_it).data());
+		}
+		glEnd();
 	}
-	glEnd();
+	else
+	{
+		glBegin(GL_LINE_LOOP);
+		for (CFIter cf_it(faces_begin()); cf_it != faces_end(); ++cf_it) {
+			CFVIter cfv_it(cfv_iter(cf_it));
+			glVertex3fv(point(cfv_it).data()); ++cfv_it;
+			glVertex3fv(point(cfv_it).data()); ++cfv_it;
+			glVertex3fv(point(cfv_it).data());
+		}
+		glEnd();
+	}
 
 	return true;
 }
