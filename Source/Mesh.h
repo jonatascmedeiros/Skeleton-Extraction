@@ -92,7 +92,7 @@ public:
 	void renderVertices(const C<VHandle> &vhs) const;
 	template <template <typename T> class C>
 	void renderFaces(const C<FHandle> &fhs) const;
-	bool render() const;
+	bool render(int type) const;
 
 	// File I/O
 	bool read(const QString &file, IO::Options options = IO::Options::Default);

@@ -23,6 +23,7 @@ private:
 	Ui::MainWindow ui;
 	Mesh _object;
 	LeastSquares _ls;
+	bool meshSetupOk;
 };
 
 #endif // __MAINWINDOW_H
