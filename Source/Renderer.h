@@ -33,10 +33,12 @@ public:
 
 	// Sets
 	inline void setMesh(Mesh *object) { _object = object; }
+	inline void setSkeleton(Mesh *object) { _skeleton = object; }
 
 private:
 	int _width, _height;
 	Mesh *_object;
+	Mesh *_skeleton;
 	GLuint _dlList;
 	RX::Shader phong;
 	QPoint lastMousePosition;	

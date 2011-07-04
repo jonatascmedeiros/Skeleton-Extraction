@@ -46,6 +46,10 @@ void Renderer::initializeGL()
 
 	_dlList = glGenLists(1);
 
+	//glEnable (GL_BLEND);
+	//glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_CULL_FACE);
+
 	cam.setZoomOffset(10);
 	cam.setXRotation(-30);	
 }
@@ -53,10 +57,10 @@ void Renderer::initializeGL()
 void Renderer::paintGL()
 {  
 	glClearDepth(1.0f);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 			
 	if(!_object) return;
 
@@ -64,11 +68,12 @@ void Renderer::paintGL()
     glLoadIdentity();
     glMultMatrixf(cam.getViewMatrix());	
 
-	glColor3f(1.0, 0.0, 0.0f);
+	glColor4f(1.0, 0.0, 0.0f, 1.0);
 	phong.enable();
-	_object->render(_PHONG);
+	_object->render(_PHONG);	
 	phong.disable();
-	_object->render(_WIREFRAME);
+	_skeleton->render(_WIREFRAME);
+	
 
 }
 
@@ -83,8 +88,7 @@ void Renderer::resizeGL(int width, int height)
 	gluPerspective(45, width/(float)height, 0.1, 5000);
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	//gluLookAt(0, 0, -5, 0, 0, 0, 0, 1, 0);
+	glLoadIdentity();	
 }
 
 void Renderer::keyPressEvent(QKeyEvent *event) 

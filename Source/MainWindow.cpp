@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 
 	// initialize opengl widget
 	ui.widgetMesh->setMesh(&_object);
+	ui.widgetMesh->setSkeleton(&_skeleton);
 	ui.widgetMesh->setFocus();
 
 	// connect signals to slots
@@ -41,6 +42,7 @@ void MainWindow::load()
 	QString filename = QFileDialog::getOpenFileName(this->parentWidget(), tr("Open File"), QDir::currentPath());
 	if(!filename.isEmpty()) {
 		_object.read(filename);
+		_skeleton = _object;
 		_first = true;
 		
 	}
@@ -49,29 +51,15 @@ void MainWindow::load()
 void MainWindow::iterateOnce()
 {
 	if(_first) {
-		startTime = clock();
-		_ls.createMatrix2(_object);
-		endTime = clock();
-		qDebug() << "createMatrix2: " << (double)(endTime-startTime)/CLOCKS_PER_SEC << " seconds." << "\n\n"; 
+		
+		_ls.createMatrix2(_skeleton);		 
 		_first = false;
 	}
-	startTime = clock();
 	_ls.solve();
-	endTime = clock();
-	qDebug() << "solve: " << (double)(endTime-startTime)/CLOCKS_PER_SEC << " seconds." << "\n\n"; 
-	startTime = clock();
-	_ls.updateMesh2(&_object);
-	endTime = clock();
-	qDebug() << "updateMesh2: " << (double)(endTime-startTime)/CLOCKS_PER_SEC << " seconds." << "\n\n";
-	startTime = clock();
-	_ls.updateWeights(&_object);
-	endTime = clock();
-	qDebug() << "updateWeights: " << (double)(endTime-startTime)/CLOCKS_PER_SEC << " seconds." << "\n\n";
-	startTime = clock();
-	_ls.updateMatrices2(_object);
-	endTime = clock();
-	qDebug() << "updateMatrices2: " << (double)(endTime-startTime)/CLOCKS_PER_SEC << " seconds." << "\n\n\n";
-
+	_ls.updateMesh2(&_skeleton);
+	_ls.updateWeights(&_skeleton);
+	_ls.updateMatrices2(_skeleton);
+	
 	/*
 	if (!meshSetupOk){ 
 		_ls.setup(_object);

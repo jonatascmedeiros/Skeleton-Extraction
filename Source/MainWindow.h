@@ -22,6 +22,7 @@ public:
 private:
 	Ui::MainWindow ui;
 	Mesh _object;
+	Mesh _skeleton;
 	LeastSquares _ls;
 	bool _first;
 };
