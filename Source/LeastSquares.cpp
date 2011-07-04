@@ -14,7 +14,8 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 	_WH = vecn(_n);
 	double a = mesh.avgArea();
 	_WL = 100 * sqrt(a);
-	_WHOriginal = 1.0;
+	//_WL = 0.0;
+	_WHOriginal = 2.0;
 
     
     for(int i = 0; i < _n; ++i)
@@ -22,9 +23,9 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 		_b.set(i, 0);
 		_b.set(i+_n, 0);
 		_b.set(i+2*_n, 0);
-        _b.set(i+3*_n, mesh.point3(i).x);
-        _b.set(i+4*_n, mesh.point3(i).y);
-        _b.set(i+5*_n, mesh.point3(i).z);
+        _b.set(i+3*_n, mesh.point3(i).x * _WHOriginal);
+        _b.set(i+4*_n, mesh.point3(i).y * _WHOriginal);
+        _b.set(i+5*_n, mesh.point3(i).z * _WHOriginal);
 		_WH.set(i, _WHOriginal);
     }
 

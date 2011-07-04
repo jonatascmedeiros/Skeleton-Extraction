@@ -88,8 +88,12 @@ vecn solveLS(matcc A, vecn b)
 	filecc = fopen("cholmod_fileaux1.txt", "r");
 	Ac = cholmod_read_sparse(filecc, &c);
 	At = cholmod_transpose(Ac, 1, &c);
-	AtA = cholmod_ssmult(At, Ac, 0, 1, 0, &c);
 	fclose(filecc);
+	filecc = fopen("cholmod_fileaux1.txt", "w");
+	AtA = cholmod_ssmult(At, Ac, 0, 1, 0, &c);
+	cholmod_write_sparse(filecc, AtA, NULL, "", &c);
+	fclose(filecc);
+	
 	
 
 	// convert vecn to cholmod format 
@@ -116,6 +120,7 @@ vecn solveLS(matcc A, vecn b)
 	fclose(filecc2);
 
 	// solve
+	AtA->stype = 1;
 	Lc = cholmod_analyze(AtA, &c);
 	cholmod_factorize(AtA, Lc, &c);
 	xc = cholmod_solve(CHOLMOD_A, Lc, Atb, &c);
