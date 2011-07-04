@@ -94,7 +94,9 @@ void LeastSquares::createMatrix2(const Mesh &mesh)
 	_b = matcc(_n, 3);
 	_WH = vecn(_n);
 	double a = mesh.avgArea();
-	_WL = 100 * sqrt(a);
+	//_WL = 100 * sqrt(a);
+	//_WL = 1.0; // torus
+	_WL = 1.0; //bitorus
 	//_WL = 0.1;
 	_WHOriginal = 1.0;
 
