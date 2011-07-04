@@ -135,14 +135,14 @@ bool Mesh::render(int type) const
 	}
 	else
 	{
-		glBegin(GL_LINE_LOOP);
 		for (CFIter cf_it(faces_begin()); cf_it != faces_end(); ++cf_it) {
+			glBegin(GL_LINE_LOOP);
 			CFVIter cfv_it(cfv_iter(cf_it));
 			glVertex3fv(point(cfv_it).data()); ++cfv_it;
 			glVertex3fv(point(cfv_it).data()); ++cfv_it;
 			glVertex3fv(point(cfv_it).data());
+			glEnd();
 		}
-		glEnd();
 	}
 
 	return true;

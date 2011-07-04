@@ -22,7 +22,7 @@ private:
 	int _n;
 	matcc _A;
 	vecn _x, _WH, _b; 
-	double _WL;	
+	double _WL, _WHOriginal;	
 };
 
 

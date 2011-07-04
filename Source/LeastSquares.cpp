@@ -13,7 +13,9 @@ void LeastSquares::createMatrix(const Mesh &mesh)
 	_b = vecn(_n*6);
 	_WH = vecn(_n);
 	double a = mesh.avgArea();
-	_WL = 0.1;//0.001 * sqrt(a);
+	_WL = 100 * sqrt(a);
+	_WHOriginal = 1.0;
+
     
     for(int i = 0; i < _n; ++i)
     {
@@ -23,7 +25,7 @@ void LeastSquares::createMatrix(const Mesh &mesh)
         _b.set(i+3*_n, mesh.point3(i).x);
         _b.set(i+4*_n, mesh.point3(i).y);
         _b.set(i+5*_n, mesh.point3(i).z);
-		_WH.set(i, 1.0);
+		_WH.set(i, _WHOriginal);
     }
 
 	// laplacian constraints
@@ -102,7 +104,7 @@ void LeastSquares::updateWeights(Mesh* meshc)
 	for(int i = 0; i < _n; ++i)
 	{
 		double areaRatio = meshc->originalOneRingArea[i] / meshc->getOneRingArea(Mesh::VHandle(i));
-		_WH.set(i, sqrt(areaRatio));
+		_WH.set(i, _WHOriginal * sqrt(areaRatio));
 	}
 
 	_WL *= 2.0;	
@@ -110,18 +112,11 @@ void LeastSquares::updateWeights(Mesh* meshc)
 
 void LeastSquares::updateMatrices(const Mesh &mesh)
 {
-	for(int i = 0; i < _n; ++i)
-    {
-		_b.set(i, 0);
-		_b.set(i+_n, 0);
-		_b.set(i+2*_n, 0);
-        _b.set(i+3*_n, _WH.at(i) * mesh.point3(i).x);
-        _b.set(i+4*_n, _WH.at(i) * mesh.point3(i).y);
-        _b.set(i+5*_n, _WH.at(i) * mesh.point3(i).z);		
-    }
+	int index = 0;
 
 	for (int i = 0; i < _n; ++i) 
 	{
+		bool eliminated = false;
 		double omegaSummation = 0.0;
 		// neighbors weight
 		QVector<Mesh::VHandle> neighbors = mesh.adjacentVertices(Mesh::VHandle(i));
@@ -144,31 +139,43 @@ void LeastSquares::updateMatrices(const Mesh &mesh)
 			float dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			float angle = acos(dotProduct);
 			float cotA, cotB;
-			if(tan(angle) != 0.0)
+			if(abs(tan(angle)) > 0.0001)
 				cotA = 1.0 / tan(angle);
 			else
-				cotA = 10000;
-
+			{
+				_A.removeRow(index);
+				eliminated = true;
+				index--;
+				break;
+			}
 
 			v1 = mesh.point3(Mesh::VHandle(i)) - mesh.point3(commonNeighbors[1]);
 			v2 = mesh.point3(neighbors[j]) - mesh.point3(commonNeighbors[1]);
 			v1.normalize();	v2.normalize();
 			dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			angle = acos(dotProduct);
-			if(tan(angle) != 0.0)
+			if(abs(tan(angle)) > 0.0001)
 				cotB = 1.0 / tan(angle);
 			else
-				cotB = 10000;
+			{
+				_A.removeRow(index);
+				eliminated = true;
+				index--;
+				break;
+			}
 			
 			double omega = cotA + cotB;	
 			omegaSummation -= omega;
 			omega *= _WL;		
 
 			for (int k = 0, offs = 0; k < 3; ++k, offs += _n)
-				_A.set(offs+i, offs+neighbors[j].idx(), omega);
+				_A.set(offs+index, offs+neighbors[j].idx(), omega);
 		}
-		for (int k = 0, offs = 0; k < 3; ++k, offs += _n)
-			_A.set(offs+i, offs+i, omegaSummation * _WL);
+		if(!eliminated)
+			for (int k = 0, offs = 0; k < 3; ++k, offs += _n)
+				_A.set(offs+index, offs+index, omegaSummation * _WL);
+
+		index++;
 	}
 
 	// anchor constraints
@@ -178,4 +185,18 @@ void LeastSquares::updateMatrices(const Mesh &mesh)
 		_A.set(4*_n+i, i+_n,  _WH.at(i));
 		_A.set(5*_n+i, i+2*_n,  _WH.at(i));	
 	}	
+
+	for(int i = 0; i < index; ++i)
+    {
+		_b.set(i, 0);
+		_b.set(i+index, 0);
+		_b.set(i+2*index, 0);       	
+    }
+
+	for(int i = 0; i < _n; ++i)
+    {
+		_b.set(i+3*_n, _WH.at(i) * mesh.point3(i).x);
+        _b.set(i+4*_n, _WH.at(i) * mesh.point3(i).y);
+        _b.set(i+5*_n, _WH.at(i) * mesh.point3(i).z);	
+	}
 }
