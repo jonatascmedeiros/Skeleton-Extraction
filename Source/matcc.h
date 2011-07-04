@@ -14,7 +14,9 @@ public:
 	matcc(int rows, int columns);
 
 	FILE* toCholmod(string name);
-	void fromCholmod(FILE *f);
+	FILE* toCholmodArray(string name);
+	void fromCholmod(char* f);
+	void fromCholmodArray(char* f);
 
 	void removeRow(int r);
 
@@ -27,6 +29,6 @@ private:
 	map<pair<int, int>, double> _m;
 };
 
-vecn solveLS(matcc A, vecn b);
+matcc solveLS(matcc A, matcc b);
 
 #endif // __MATCC_H

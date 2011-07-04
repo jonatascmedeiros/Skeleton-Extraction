@@ -45,14 +45,14 @@ void MainWindow::load()
 void MainWindow::iterateOnce()
 {
 	if(_first) {
-		_ls.createMatrix(_object);
+		_ls.createMatrix2(_object);
 		_first = false;
 	}
 
 	_ls.solve();
-	_ls.updateMesh(&_object);
+	_ls.updateMesh2(&_object);
 	_ls.updateWeights(&_object);
-	_ls.updateMatrices(_object);
+	_ls.updateMatrices2(_object);
 
 	/*
 	if (!meshSetupOk){ 

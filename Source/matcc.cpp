@@ -25,9 +25,58 @@ FILE* matcc::toCholmod(string name)
 	return f;
 }
 
-void matcc::fromCholmod(FILE *f)
+FILE* matcc::toCholmodArray(string name)
 {
-	// to be implemented
+	FILE *f = fopen(name.c_str(), "w");
+	
+	fprintf(f, "%d %d\n", _rows, _cols);
+
+	for(int j = 0; j < 3; j++)
+		for(int i = 0; i < _rows; i++)
+		{
+			fprintf(f, "%f\n", at(i, j)); 
+		}
+			
+	return f;	
+}
+
+void matcc::fromCholmod(char* f)
+{
+	char header[200];
+	fstream file;
+	file.open(f);
+	file.getline(header, 200);
+	file >> _rows >> _cols >> _nnz;
+	
+	_m.clear();
+	int i, j;
+	double val;
+	for(int i = 0; i < _rows; ++i)
+	{
+		file >> i >> j >> val;
+		set(i, j, val);
+	}
+	file.close();
+}
+
+void matcc::fromCholmodArray(char* f)
+{
+	char header[200];
+	fstream file;
+	file.open(f);
+	file.getline(header, 200);
+	file >> _rows >> _cols;
+	
+	_m.clear();
+	int i, j;
+	double val;
+	for(int j = 0; j < _cols; ++j)
+		for(int i = 0; i < _rows; ++i)
+		{
+			file >> val;
+			set(i, j, val);
+		}
+	file.close();
 }
 
 const double matcc::at(int i, int j) const
@@ -72,7 +121,7 @@ void matcc::removeRow(int r)
 	_m = newM;
 }
 
-vecn solveLS(matcc A, vecn b)
+matcc solveLS(matcc A, matcc b)
 {
 	cholmod_sparse *Ac, *At, *AtA;
 	cholmod_dense *xc, *bc, *Atb;
@@ -92,28 +141,26 @@ vecn solveLS(matcc A, vecn b)
 	filecc = fopen("cholmod_fileaux1.txt", "w");
 	AtA = cholmod_ssmult(At, Ac, 0, 1, 0, &c);
 	cholmod_write_sparse(filecc, AtA, NULL, "", &c);
-	fclose(filecc);
-	
-	
+	fclose(filecc);	
 
 	// convert vecn to cholmod format 
-	FILE *filecc2 = b.toCholmod("cholmod_fileaux2.txt");
+	FILE *filecc2 = b.toCholmodArray("cholmod_fileaux2.txt");
 	fclose(filecc2);
 	filecc2 = fopen("cholmod_fileaux2.txt", "r");
-	bc = cholmod_read_dense(filecc2, &c);
+	Atb = cholmod_read_dense(filecc2, &c);
 	fclose(filecc2);
 
 	// stupid cholmod
-	Atb = cholmod_ones(Ac->ncol, 1, Ac->xtype, &c);
+	//Atb = cholmod_ones(Ac->ncol, 1, Ac->xtype, &c);
 	
-	double alpha[2] = {1, 0};
-	double beta[2] = {0, 0};
+	//double alpha[2] = {1, 0};
+	//double beta[2] = {0, 0};
 
-	filecc = fopen("cholmod_fileaux1.txt", "w");
-	cholmod_write_dense(filecc, Atb, "", &c);
-	fclose(filecc);
+	//filecc = fopen("cholmod_fileaux1.txt", "w");
+	//cholmod_write_dense(filecc, Atb, "", &c);
+	//fclose(filecc);
 
-	cholmod_sdmult(At, 0, alpha, beta, bc, Atb, &c);
+	//cholmod_sdmult(At, 0, alpha, beta, bc, Atb, &c);
 	
 	filecc2 = fopen("cholmod_fileaux2.txt", "w");
 	cholmod_write_dense(filecc2, Atb, "", &c);
@@ -132,8 +179,8 @@ vecn solveLS(matcc A, vecn b)
 	//std::fstream filecc4;
 	//filecc4.open("cholmod_getX2.txt");
 	//filecc3 = fopen("cholmod_getX2.txt", "r");
-	vecn x;
-	x.fromCholmod("cholmod_getX.txt");
+	matcc x;
+	x.fromCholmodArray("cholmod_getX.txt");
 	//filecc4.close();
 	//fclose(filecc3);
 
@@ -142,7 +189,7 @@ vecn solveLS(matcc A, vecn b)
 	cholmod_free_sparse(&At, &c);
 	cholmod_free_sparse(&AtA, &c);
 	cholmod_free_dense(&xc, &c);
-	cholmod_free_dense(&bc, &c);
+	//cholmod_free_dense(&bc, &c);
 	cholmod_free_dense(&Atb, &c);
 
 	// finish CHOLMOD

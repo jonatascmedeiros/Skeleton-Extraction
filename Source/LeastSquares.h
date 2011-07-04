@@ -18,10 +18,14 @@ public:
 	
 	int iteration;	
 
+	void createMatrix2(const Mesh &mesh);
+	void updateMesh2(Mesh *mesh);
+	void updateMatrices2(const Mesh &mesh);
+
 private:
 	int _n;
-	matcc _A;
-	vecn _x, _WH, _b; 
+	matcc _A, _x, _b;
+	vecn _WH; 
 	double _WL, _WHOriginal;	
 };
 
