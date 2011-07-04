@@ -96,7 +96,8 @@ void LeastSquares::createMatrix2(const Mesh &mesh)
 	double a = mesh.avgArea();
 	//_WL = 100 * sqrt(a);
 	//_WL = 1.0; // torus
-	_WL = 1.0; //bitorus
+	//_WL = 1.0; //bitorus
+	_WL = 10.0; // stomach
 	//_WL = 0.1;
 	_WHOriginal = 1.0;
 
@@ -188,7 +189,7 @@ void LeastSquares::updateWeights(Mesh* meshc)
 	{
 		double currArea =  meshc->getOneRingArea(Mesh::VHandle(i));
 		double areaRatio;
-		if(abs(currArea) > 0.000001)
+		if(abs(currArea) > 0.00001)
 			areaRatio = meshc->originalOneRingArea[i] / currArea;
 		else
 			areaRatio = 1000000;
@@ -319,7 +320,7 @@ void LeastSquares::updateMatrices2(const Mesh &mesh)
 			float dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			float angle = acos(dotProduct);
 			float cotA, cotB;
-			if(abs(tan(angle)) > 0.000001)
+			if(abs(tan(angle)) > 0.00001)
 				cotA = 1.0 / tan(angle);
 			else
 			{
@@ -334,7 +335,7 @@ void LeastSquares::updateMatrices2(const Mesh &mesh)
 			v1.normalize();	v2.normalize();
 			dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			angle = acos(dotProduct);
-			if(abs(tan(angle)) > 0.000001)
+			if(abs(tan(angle)) > 0.00001)
 				cotB = 1.0 / tan(angle);
 			else
 			{
