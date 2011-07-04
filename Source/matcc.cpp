@@ -1,5 +1,9 @@
 #include <cholmod.h>
 #include "matcc.h"
+#include <time.h>
+#include <QtDebug>
+
+clock_t startTime2, endTime2;
 
 matcc::matcc()
 : _rows(0), _cols(0), _nnz(0)
@@ -132,6 +136,7 @@ matcc solveLS(matcc A, matcc b)
 	cholmod_start (&c);
 
 	// convert matn to cholmod format
+	startTime2 = clock();
 	FILE *filecc = A.toCholmod("cholmod_fileaux1.txt");
 	fclose(filecc);
 	filecc = fopen("cholmod_fileaux1.txt", "r");
@@ -143,12 +148,19 @@ matcc solveLS(matcc A, matcc b)
 	cholmod_write_sparse(filecc, AtA, NULL, "", &c);
 	fclose(filecc);	
 
+	endTime2 = clock();
+	qDebug() << "AtA: " << (double)(endTime2-startTime2)/CLOCKS_PER_SEC << " seconds." << "\n\n"; 
+
+	startTime2 = clock();
 	// convert vecn to cholmod format 
 	FILE *filecc2 = b.toCholmodArray("cholmod_fileaux2.txt");
 	fclose(filecc2);
 	filecc2 = fopen("cholmod_fileaux2.txt", "r");
 	Atb = cholmod_read_dense(filecc2, &c);
 	fclose(filecc2);
+
+	endTime2 = clock();
+	qDebug() << "Atb: " << (double)(endTime2-startTime2)/CLOCKS_PER_SEC << " seconds." << "\n\n"; 
 
 	// stupid cholmod
 	//Atb = cholmod_ones(Ac->ncol, 1, Ac->xtype, &c);
@@ -162,17 +174,22 @@ matcc solveLS(matcc A, matcc b)
 
 	//cholmod_sdmult(At, 0, alpha, beta, bc, Atb, &c);
 	
-	filecc2 = fopen("cholmod_fileaux2.txt", "w");
-	cholmod_write_dense(filecc2, Atb, "", &c);
-	fclose(filecc2);
+	//filecc2 = fopen("cholmod_fileaux2.txt", "w");
+	//cholmod_write_dense(filecc2, Atb, "", &c);
+	//fclose(filecc2);
 
 	// solve
+	startTime2 = clock();
 	AtA->stype = 1;
 	Lc = cholmod_analyze(AtA, &c);
 	cholmod_factorize(AtA, Lc, &c);
 	xc = cholmod_solve(CHOLMOD_A, Lc, Atb, &c);
 
+	endTime2 = clock();
+	qDebug() << "cholmod_solve: " << (double)(endTime2-startTime2)/CLOCKS_PER_SEC << " seconds." << "\n\n"; 
+
 	// copy x
+	startTime2 = clock();
 	FILE *filecc3 = fopen("cholmod_getX.txt", "w");
 	cholmod_write_dense(filecc3, xc, "", &c);
 	fclose(filecc3);
@@ -183,17 +200,25 @@ matcc solveLS(matcc A, matcc b)
 	x.fromCholmodArray("cholmod_getX.txt");
 	//filecc4.close();
 	//fclose(filecc3);
+	endTime2 = clock();
+	qDebug() << "x: " << (double)(endTime2-startTime2)/CLOCKS_PER_SEC << " seconds." << "\n\n"; 
 
 	// free matrices
+	startTime2 = clock();
 	cholmod_free_sparse(&Ac, &c);
 	cholmod_free_sparse(&At, &c);
 	cholmod_free_sparse(&AtA, &c);
 	cholmod_free_dense(&xc, &c);
 	//cholmod_free_dense(&bc, &c);
 	cholmod_free_dense(&Atb, &c);
+	endTime2 = clock();
+	qDebug() << "free: " << (double)(endTime2-startTime2)/CLOCKS_PER_SEC << " seconds." << "\n\n"; 
 
 	// finish CHOLMOD
+	startTime2 = clock();
 	cholmod_finish (&c);
+	endTime2 = clock();
+	qDebug() << "finish: " << (double)(endTime2-startTime2)/CLOCKS_PER_SEC << " seconds." << "\n\n";
 
 	return x;
 }

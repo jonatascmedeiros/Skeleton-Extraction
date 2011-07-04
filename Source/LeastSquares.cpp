@@ -184,7 +184,13 @@ void LeastSquares::updateWeights(Mesh* meshc)
 {
 	for(int i = 0; i < _n; ++i)
 	{
-		double areaRatio = meshc->originalOneRingArea[i] / meshc->getOneRingArea(Mesh::VHandle(i));
+		double currArea =  meshc->getOneRingArea(Mesh::VHandle(i));
+		double areaRatio;
+		if(abs(currArea) > 0.000001)
+			areaRatio = meshc->originalOneRingArea[i] / currArea;
+		else
+			areaRatio = 1000000;
+			
 		_WH.set(i, _WHOriginal * sqrt(areaRatio));
 	}
 
@@ -311,7 +317,7 @@ void LeastSquares::updateMatrices2(const Mesh &mesh)
 			float dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			float angle = acos(dotProduct);
 			float cotA, cotB;
-			if(abs(tan(angle)) > 0.0001)
+			if(abs(tan(angle)) > 0.000001)
 				cotA = 1.0 / tan(angle);
 			else
 			{
@@ -326,7 +332,7 @@ void LeastSquares::updateMatrices2(const Mesh &mesh)
 			v1.normalize();	v2.normalize();
 			dotProduct = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 			angle = acos(dotProduct);
-			if(abs(tan(angle)) > 0.0001)
+			if(abs(tan(angle)) > 0.000001)
 				cotB = 1.0 / tan(angle);
 			else
 			{
@@ -346,18 +352,14 @@ void LeastSquares::updateMatrices2(const Mesh &mesh)
 			_A.set(index, index, omegaSummation * _WL);
 
 		index++;
-	}
 
-	// anchor constraints
-	for(int i = 0; i < _n; ++i)
-	{
-		_A.set(_n+i, i, _WH.at(i));		
-	}	
-
-	for(int i = 0; i < _n; ++i)
-    {
 		_b.set(i, 0, _WH.at(i) * _WH.at(i) * mesh.point3(i).x);
         _b.set(i, 1, _WH.at(i) * _WH.at(i) * mesh.point3(i).y);
         _b.set(i, 2, _WH.at(i) * _WH.at(i) * mesh.point3(i).z);	
+	}
+
+	for(int i = 0; i < _n; i++)
+	{
+		_A.set(index+i, i, _WH.at(i));
 	}
 }
