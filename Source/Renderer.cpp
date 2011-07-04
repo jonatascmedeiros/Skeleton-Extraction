@@ -11,6 +11,9 @@
 #include "Renderer.h"
 #include "Utils.h"
 
+#define _WIREFRAME 0
+#define _PHONG 1
+
 using namespace C3::Math;
 
 ofstream logFile("log.txt");
@@ -63,8 +66,10 @@ void Renderer::paintGL()
 
 	glColor3f(1.0, 0.0, 0.0f);
 	phong.enable();
-	_object->render();
+	_object->render(_PHONG);
 	phong.disable();
+	_object->render(_WIREFRAME);
+
 }
 
 void Renderer::resizeGL(int width, int height) 

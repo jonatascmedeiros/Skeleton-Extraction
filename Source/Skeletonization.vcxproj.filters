@@ -94,6 +94,9 @@
     <ClCompile Include="Matrix4x4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="matcc.cpp">
+      <Filter>Source Files\Cholmod</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_MainWindow.h">
@@ -128,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="Matrix4x4.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="matcc.h">
+      <Filter>Header Files\Cholmod</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

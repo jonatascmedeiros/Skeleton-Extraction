@@ -109,6 +109,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="LeastSquares.cpp" />
+    <ClCompile Include="matcc.cpp" />
     <ClCompile Include="matn.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -130,6 +131,7 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="matcc.h" />
     <ClInclude Include="matn.h" />
     <ClInclude Include="Matrix4x4.h" />
     <ClInclude Include="vecn.h" />
