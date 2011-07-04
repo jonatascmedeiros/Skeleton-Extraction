@@ -20,9 +20,11 @@ public:
 	const double at(int i, int j) const;
 	void set(int i, int j, double value);
 
+	map<pair<int, int>, double> _m;
+
 private:
 	int _rows, _cols, _nnz;
-	map<pair<int, int>, double> _m;
+	//map<pair<int, int>, double> _m;
 };
 
 vecn solveLS(matcc A, vecn b);
