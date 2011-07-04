@@ -51,6 +51,27 @@ void matcc::set(int i, int j, double value)
 	_m[p] = value;
 }
 
+void matcc::removeRow(int r)
+{
+	map<pair<int, int>, double> newM;
+
+	map<pair<int, int>, double>::iterator i;
+	for(i = _m.begin(); i != _m.end(); ++i) {
+
+		if((*i).first.first < r)
+			newM[(*i).first] = (*i).second;
+
+		if((*i).first.first == r)
+			--_nnz;
+
+		if((*i).first.first > r)
+			newM[pair<int,int>((*i).first.first-1, (*i).first.second)] = (*i).second;
+	}
+
+	--_rows;
+	_m = newM;
+}
+
 vecn solveLS(matcc A, vecn b)
 {
 	cholmod_sparse *Ac, *At, *AtA;

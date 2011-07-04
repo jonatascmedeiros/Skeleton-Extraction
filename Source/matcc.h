@@ -16,6 +16,8 @@ public:
 	FILE* toCholmod(string name);
 	void fromCholmod(FILE *f);
 
+	void removeRow(int r);
+
 	// Gets/Sets
 	const double at(int i, int j) const;
 	void set(int i, int j, double value);
